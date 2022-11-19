@@ -2,7 +2,7 @@
 import http.server
 import socketserver
 import os
-import time
+#import time
 from datetime import datetime, timedelta
 
 #print('source code for "http.server":', http.server.__file__)
@@ -25,13 +25,18 @@ class web_server(http.server.SimpleHTTPRequestHandler):
             self.protocol_version = 'HTTP/1.1'
             self.send_response(200)
             self.send_header("Content-type", "text/html; charset=UTF-8")
-            self.end_headers()            
+            self.end_headers()
+            # CZAS ZIMOWY ( +1H ) 
             time = (datetime.now()  + timedelta(hours=1)).strftime('%H:%M:%S')
             self.wfile.write(str(time).encode('UTF-8'))
-
-            #self.wfile.write(str(time.strftime('%H:%M:%S', time.localtime())).encoding('utf-8'))
-            #self.wfile.write(str(time.strftime('%H:%M:%S', time.localtime())).encode('utf-8'))
-            #self.wfile.write(f"{time}\n")
+        elif self.path.startswith('/rev?'):
+            temporary_string = self.path.split("?")[1]
+            temporary_string = str(temporary_string[::-1])
+            self.protocol_version = 'HTTP/1.1'
+            self.send_response(200)
+            self.send_header("Content-type", "text/html; charset=UTF-8")
+            self.end_headers()
+            self.wfile.write(temporary_string.encode('utf-8'))
         else:
             super().do_GET()
     
