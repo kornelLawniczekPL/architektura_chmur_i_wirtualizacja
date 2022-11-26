@@ -1,5 +1,5 @@
-docker_name:=lab0_kornel_lawniczek_244024
-container_name:=lab0_kornel_lawniczek_244024
+docker_name:=lab3_kornel_lawniczek_244024
+container_name:=lab3_kornel_lawniczek_244024
 
 docker_build:
 	echo "Prepare docker here..."

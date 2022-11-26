@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 import http.server
 import socketserver
-import os
-#import time
-from datetime import datetime, timedelta
 import re
+import os
+import time
+from datetime import datetime, timedelta
+from urllib.parse import urlparse, parse_qs
+import re
+
 
 #print('source code for "http.server":', http.server.__file__)
 
@@ -23,38 +26,26 @@ def conting_signs(string):
         elif regex.search(sign):
             out_dict['special'] += 1
 
-    print(out_dict)
-    return out_dict
+    #print(out_dict)
+    return str(out_dict)
 
 
 class web_server(http.server.SimpleHTTPRequestHandler):
     
-    def do_GET(self):
+   def do_GET(self):
 
         print(self.path)
+        path = urlparse(self.path)
+        query_params = parse_qs(path.query) 
         
-        if self.path == '/':
+        if path.path == '/':
             self.protocol_version = 'HTTP/1.1'
             self.send_response(200)
             self.send_header("Content-type", "text/html; charset=UTF-8")
             self.end_headers()            
-            self.wfile.write(b"Hello World!\n")
-        elif self.path == '/time':
-            self.protocol_version = 'HTTP/1.1'
-            self.send_response(200)
-            self.send_header("Content-type", "text/html; charset=UTF-8")
-            self.end_headers()
-            # CZAS ZIMOWY ( +1H ) 
-            time = (datetime.now()  + timedelta(hours=1)).strftime('%H:%M:%S')
-            self.wfile.write(str(time).encode('UTF-8'))
-        elif self.path.startswith('/rev?'):
-            temporary_string = self.path.split("?")[1]
-            temporary_string = str(temporary_string[::-1])
-            self.protocol_version = 'HTTP/1.1'
-            self.send_response(200)
-            self.send_header("Content-type", "text/html; charset=UTF-8")
-            self.end_headers()
-            self.wfile.write(temporary_string.encode('utf-8'))
+            if query_params.get('str', None):
+                string_to_count = query_params.get('str', None)[0]
+                self.wfile.write(str(conting_signs(string_to_count)).encode('utf-8'))
         else:
             super().do_GET()
     
