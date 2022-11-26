@@ -4,10 +4,28 @@ import socketserver
 import os
 #import time
 from datetime import datetime, timedelta
+import re
 
 #print('source code for "http.server":', http.server.__file__)
 
-print(datetime.now())
+def conting_signs(string):
+
+    out_dict = {'lowercase': 0, 'uppercase': 0, 'digits': 0, 'special': 0}
+    regex = re.compile(r"[@_!#$%^&*()<>?/\|}{~:]")
+
+    for sign in string:
+        if sign.islower():
+            out_dict['lowercase'] += 1
+        elif sign.isupper():
+            out_dict['uppercase'] += 1
+        elif sign.isdigit():
+            out_dict['digits'] += 1
+        elif regex.search(sign):
+            out_dict['special'] += 1
+
+    print(out_dict)
+    return out_dict
+
 
 class web_server(http.server.SimpleHTTPRequestHandler):
     
